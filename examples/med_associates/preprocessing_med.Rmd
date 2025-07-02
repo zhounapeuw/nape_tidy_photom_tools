@@ -1,0 +1,88 @@
+---
+title: "wip_med_extractor"
+author: "adam gordon-fennell"
+date: "9/25/2021"
+output: html_document
+---
+
+# libraries
+```{r}
+library(tidyverse)
+library(lubridate) 
+library(readtext) # used to parse raw med data
+library(arrow) # necessary if using feather files
+library(janitor)
+```
+
+# setup
+## directories
+```{r}
+dir_raw <- './data_a_raw'
+dir_tidy <- './data_b_tidy'
+dir_combined <- './data_c_combined'
+```
+
+## keys / logs
+```{r}
+key_med_variables  <- read_csv('key_med_variables.csv', col_types = cols())
+
+key_med_events <- read_csv('key_med_events.csv', col_types = cols())
+
+log_med_data <- read_csv('log_med_data.csv', col_types = cols())
+```
+
+
+## parameters
+```{r}
+extension <- 'csv' # extension for tidy and combined data (csv or feather)
+```
+
+## function sources
+```{r}
+source('../../functions/f_general.R')
+source('../../functions/f_med_associates.R')
+```
+
+# pre-processing
+## convert raw med files to tidy files
+```{r}
+# process all raw med data in dir_raw into tidy dataframes and save them in dir_tidy
+#  - uses variable med_key_num located in log and keys to parse raw data
+#  - produces 2 outputs:
+#    1. univariate data including parameters, counts, etc. defined by a character variable and numerical index key_med_variables
+#    2. event data including event ids and time stamps defined by "vector" in key_med_variables (must be two separate variables in med data)
+#  - set override to 1 in order to process all data listed in raw directory, set to 0 to only process data not found in tidy directory
+
+tidy_med(dir_raw, dir_tidy, key_med_variables, key_med_events, log_med_data, extension, override = 0)
+```
+
+## combine tidy datasets based on experiment
+### option 1 (character string in file names)
+```{r}
+
+# list_suffix: suffixes of files listed in tidy directory you wish to combine
+# fn_string: string contained in file names you wish to combine
+# append_combined: toggle to append to existing (1) or generate new combined data (0)
+
+combine_dfs_fn_string(dir_tidy, 
+                      dir_combined, 
+                      list_suffix = c('_univariate.csv', '_event.csv'), 
+                      fn_string = 'aaf',                                
+                      append_combined = 1)                              
+```
+
+### option 2 (variable(s) in log_data)
+```{r}
+# variables: variables in log_data that we wish to filter by
+# values: values within variables we wish to filter to
+
+combine_dfs_log_variable(dir_tidy, 
+                         dir_combined, 
+                         list_suffix = c('_univariate.csv', '_event.csv'),
+                         log_data, 
+                         variables = c('experiment', 'procedure'), 
+                         values = c('aan', 'icss'),                
+                         append_combined = 0)
+```
+
+## 

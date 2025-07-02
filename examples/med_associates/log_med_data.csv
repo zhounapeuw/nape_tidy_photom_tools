@@ -1,0 +1,72 @@
+experiment,date,day,subject,group,procedure,med_file_name,med_key_num,note,left_tastant,right_tastant,icss_freq
+aaf,8/18/2020,d01,aaf01,ko,baseline,2020_08_18_aaf,1,,nacl,h20,NA
+aaf,8/18/2020,d01,aaf03,cntrl,baseline,2020_08_18_aaf,1,,nacl,h20,NA
+aaf,8/18/2020,d01,aaf04,cntrl,baseline,2020_08_18_aaf,1,,nacl,h20,NA
+aaf,8/18/2020,d01,aaf05,ko,baseline,2020_08_18_aaf,1,,nacl,h20,NA
+aaf,8/18/2020,d01,aaf06,ko,baseline,2020_08_18_aaf,1,,nacl,h20,NA
+aaf,8/18/2020,d01,aaf07,cntrl,baseline,2020_08_18_aaf,1,,nacl,h20,NA
+aaf,8/18/2020,d01,aaf08,cntrl,baseline,2020_08_18_aaf,1,,nacl,h20,NA
+aaf,8/18/2020,d01,aaf09,ko,baseline,2020_08_18_aaf,1,,nacl,h20,NA
+aaf,8/18/2020,d01,aaf10,ko,baseline,2020_08_18_aaf,1,,nacl,h20,NA
+aaf,8/19/2020,d02,aaf01,ko,baseline,2020_08_19_aaf,1,,nacl,h20,NA
+aaf,8/19/2020,d02,aaf03,cntrl,baseline,2020_08_19_aaf,1,,nacl,h20,NA
+aaf,8/19/2020,d02,aaf04,cntrl,baseline,2020_08_19_aaf,1,,nacl,h20,NA
+aaf,8/19/2020,d02,aaf05,ko,baseline,2020_08_19_aaf,1,,nacl,h20,NA
+aaf,8/19/2020,d02,aaf06,ko,baseline,2020_08_19_aaf,1,,nacl,h20,NA
+aaf,8/19/2020,d02,aaf07,cntrl,baseline,2020_08_19_aaf,1,,nacl,h20,NA
+aaf,8/19/2020,d02,aaf08,cntrl,baseline,2020_08_19_aaf,1,,nacl,h20,NA
+aaf,8/19/2020,d02,aaf09,ko,baseline,2020_08_19_aaf,1,,nacl,h20,NA
+aaf,8/19/2020,d02,aaf10,ko,baseline,2020_08_19_aaf,1,,nacl,h20,NA
+aaf,8/20/2020,d03,aaf01,ko,baseline,2020_08_20_aaf,1,mice depleted after session,nacl,h20,NA
+aaf,8/20/2020,d03,aaf03,cntrl,baseline,2020_08_20_aaf,1,mice depleted after session,nacl,h20,NA
+aaf,8/20/2020,d03,aaf04,cntrl,baseline,2020_08_20_aaf,1,mice depleted after session,nacl,h20,NA
+aaf,8/20/2020,d03,aaf05,ko,baseline,2020_08_20_aaf,1,mice depleted after session,nacl,h20,NA
+aaf,8/20/2020,d03,aaf06,ko,baseline,2020_08_20_aaf,1,mice depleted after session,nacl,h20,NA
+aaf,8/20/2020,d03,aaf07,cntrl,baseline,2020_08_20_aaf,1,mice depleted after session,nacl,h20,NA
+aaf,8/20/2020,d03,aaf08,cntrl,baseline,2020_08_20_aaf,1,mice depleted after session,nacl,h20,NA
+aaf,8/20/2020,d03,aaf09,ko,baseline,2020_08_20_aaf,1,mice depleted after session,nacl,h20,NA
+aaf,8/20/2020,d03,aaf10,ko,baseline,2020_08_20_aaf,1,mice depleted after session,nacl,h20,NA
+aaf,8/22/2020,d04,aaf01,ko,test,2020_08_22_aaf,1,,nacl,h20,NA
+aaf,8/22/2020,d04,aaf03,cntrl,test,2020_08_22_aaf,1,,nacl,h20,NA
+aaf,8/22/2020,d04,aaf04,cntrl,test,2020_08_22_aaf,1,,nacl,h20,NA
+aaf,8/22/2020,d04,aaf05,ko,test,2020_08_22_aaf,1,,nacl,h20,NA
+aaf,8/22/2020,d04,aaf06,ko,test,2020_08_22_aaf,1,,nacl,h20,NA
+aaf,8/22/2020,d04,aaf07,cntrl,test,2020_08_22_aaf,1,,nacl,h20,NA
+aaf,8/22/2020,d04,aaf08,cntrl,test,2020_08_22_aaf,1,,nacl,h20,NA
+aaf,8/22/2020,d04,aaf09,ko,test,2020_08_22_aaf,1,,nacl,h20,NA
+aaf,8/22/2020,d04,aaf10,ko,test,2020_08_22_aaf,1,,nacl,h20,NA
+aan,6/27/2021,d01,aan09,mc,icss,2021_06_27_aan,2,,NA,NA,10
+aan,6/27/2021,d01,aan10,mc,icss,2021_06_27_aan,2,,NA,NA,5
+aan,6/27/2021,d01,aan11,chr2,icss,2021_06_27_aan,2,,NA,NA,40
+aan,6/27/2021,d01,aan12,chr2,icss,2021_06_27_aan,2,,NA,NA,1
+aan,6/27/2021,d01,aan13,mc,icss,2021_06_27_aan,2,,NA,NA,5
+aan,6/27/2021,d01,aan15,chr2,icss,2021_06_27_aan,2,,NA,NA,20
+aan,6/27/2021,d01,aan16,chr2,icss,2021_06_27_aan,2,,NA,NA,5
+aan,6/28/2021,d02,aan09,mc,icss,2021_06_28_aan,2,,NA,NA,5
+aan,6/28/2021,d07,aan10,mc,icss,2021_06_28_aan,2,,NA,NA,20
+aan,6/28/2021,d07,aan11,chr2,icss,2021_06_28_aan,2,,NA,NA,10
+aan,6/28/2021,d07,aan12,chr2,icss,2021_06_28_aan,2,,NA,NA,5
+aan,6/28/2021,d07,aan13,mc,icss,2021_06_28_aan,2,,NA,NA,10
+aan,6/28/2021,d07,aan15,chr2,icss,2021_06_28_aan,2,,NA,NA,10
+aan,6/28/2021,d07,aan16,chr2,icss,2021_06_28_aan,2,,NA,NA,20
+aan,6/29/2021,d01,aan09,mc,icss,2021_06_29_aan,2,,NA,NA,1
+aan,6/29/2021,d01,aan10,mc,icss,2021_06_29_aan,2,,NA,NA,40
+aan,6/29/2021,d01,aan11,chr2,icss,2021_06_29_aan,2,loud noise inside chamber around 770s temporarially interupted responding. Seems to have been speaker shifting in behavioral box.,NA,NA,20
+aan,6/29/2021,d01,aan12,chr2,icss,2021_06_29_aan,2,,NA,NA,10
+aan,6/29/2021,d01,aan13,mc,icss,2021_06_29_aan,2,,NA,NA,20
+aan,6/29/2021,d01,aan15,chr2,icss,2021_06_29_aan,2,,NA,NA,5
+aan,6/29/2021,d01,aan16,chr2,icss,2021_06_29_aan,2,,NA,NA,10
+aan,6/30/2021,d02,aan09,mc,icss,2021_06_30_aan,2,,NA,NA,20
+aan,6/30/2021,d02,aan10,mc,icss,2021_06_30_aan,2,,NA,NA,10
+aan,6/30/2021,d02,aan11,chr2,icss,2021_06_30_aan,2,,NA,NA,1
+aan,6/30/2021,d02,aan12,chr2,icss,2021_06_30_aan,2,,NA,NA,40
+aan,6/30/2021,d02,aan13,mc,icss,2021_06_30_aan,2,,NA,NA,1
+aan,6/30/2021,d02,aan15,chr2,icss,2021_06_30_aan,2,,NA,NA,1
+aan,6/30/2021,d02,aan16,chr2,icss,2021_06_30_aan,2,,NA,NA,40
+aan,7/1/2021,d03,aan09,mc,icss,2021_07_01_aan,2,,NA,NA,40
+aan,7/1/2021,d03,aan10,mc,icss,2021_07_01_aan,2,,NA,NA,1
+aan,7/1/2021,d03,aan11,chr2,icss,2021_07_01_aan,2,,NA,NA,5
+aan,7/1/2021,d03,aan12,chr2,icss,2021_07_01_aan,2,,NA,NA,20
+aan,7/1/2021,d03,aan13,mc,icss,2021_07_01_aan,2,,NA,NA,40
+aan,7/1/2021,d03,aan15,chr2,icss,2021_07_01_aan,2,,NA,NA,40
+aan,7/1/2021,d03,aan16,chr2,icss,2021_07_01_aan,2,,NA,NA,1

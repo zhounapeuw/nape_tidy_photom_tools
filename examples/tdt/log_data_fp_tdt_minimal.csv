@@ -1,0 +1,3 @@
+blockname,PC0,PC1,PC2,PC3,PC4,PC5,PC6,PC7,fiber_id,trim_time_start,trim_time_end,signal_id01,signal_id02,control_id,smoothing_window,poly_degree_fitted_control,poly_degree_polyfit,down_sampled_freq,peth_pre,peth_post,events_of_interest,events_manual_fn
+2022_06_15_abb07,lick,access_period,NA,NA,NA,NA,NA,NA,,20,NA,465,NA,405,0.1,3,4,20,10,20,access_period,NA
+2022_06_15_abb08,lick,access_period,NA,NA,NA,NA,NA,NA,,20,NA,465,NA,405,0.1,3,4,20,10,20,access_period,NA

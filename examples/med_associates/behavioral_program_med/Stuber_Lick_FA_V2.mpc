@@ -1,0 +1,218 @@
+\
+\ StuberLick_FA
+\
+\ April 2020
+\
+\
+
+
+
+\ Adam Gordon-Fennell:
+\ "Self-administration of liquid
+\  For this I would like to have 1 liquid receptacle,
+\  1 lickometer for the receptacle, 1 pump, 2
+\  nose-pokes, and 2 clue lights per chamber.
+\
+\  For both experiments, I need to be able to
+\  control external lasers via TTL, and I would
+\  like to have horizontal beam breaks if possible."
+\
+\
+\  The chamber contains 2 lick spouts, therefore coded for
+\   two lick spouts, left and right.
+\
+\
+
+
+
+
+\ Revisions:
+\
+\
+\   May 2020 - Adam Gordon-Fennell: "Free-acess licking for liquid,
+\               I would like to record licks on 2 lick spouts within
+\               each chamber"
+\
+\            - Commented all menu items out except session length
+\            - Removed all nosepoke recording and ITI timing
+\            - Removed reward delivery via pump, liquid will be freely
+\              available via bottle
+\
+\            - This is StuberLick_FA.
+\
+\
+\
+\  May 2020 - Adam Gordon-Fennell: "I switched the house light to the two
+\              cue lights to reduce the amount of light given that the
+\              animals will be in their dark cycle. I updated the IDs for
+\              accurate timestamping."
+\
+\           - S. Ng-Evans - removed references to 'active' and 'inactive' in
+\                           event stamps and variables. Also removed other
+\                           event stamps and variables that were caryy-overs
+\                           from the FR program.
+\                         - Variable subscripts etc. were kept for consistency with the FR program.
+\
+\           - This is StuberLick_FA_V2.
+\
+\
+
+
+
+
+
+\
+\ Outputs
+
+^LeftNPLt     = 1
+^RightNPLt    = 2
+^LeftCueLt    = 4
+^RightCueLt   = 5
+^WhiteNoise   = 6
+^HouseLt      = 7
+^Pump         = 8
+^Tone1        = 9
+^Tone2        = 10
+^Tone3        = 11
+^Tone4        = 12
+^Feeder       = 13
+^OptoStim     = 14
+
+\
+\ Inputs
+^LeftNP       = 1
+^RightNP      = 2
+^HeadEntry    = 3
+^PortLick     = 4
+^LeftLick     = 5
+^RightLick    = 6
+
+
+
+
+
+\ Variables
+\
+\A(1)  = Maximum session time in minutes
+\
+\B(0)  = A(1), maximum session time, in system time
+\
+\C(2)  = Total head entries into receptacle
+\C(10) = Total right licks
+\C(13) = Total left licks
+\
+\D(2)  = Used to display session time
+\
+\E()  = Event stamps
+\      3 - Right cue light on
+\      4 - Right cue light off
+\      5 - Left cue light on
+\      6 - Left cue light off
+\     16 - Sipper tray head entry
+\     23 - Right lick
+\     26 - Left lick
+\    100 - Session terminated
+\
+\F()  = Time stamps
+\
+\T    = Session timer in seconds
+\V    = Event counter
+\
+
+
+
+
+DIM A = 20
+DIM B = 20
+DIM C = 20
+DIM D = 20
+DIM E = 50000
+DIM F = 50000
+
+
+LIST R = 30, 60, 90, 120
+
+
+
+VAR_ALIAS Maximum session duration (min) = A(1)
+
+
+
+
+
+\*****************************************************
+\**** DEFAULTS AND SESSION TIMER AND TERMINATION *****
+\*****************************************************
+S.S.1,
+S1,
+    0": SET A(1)  =  30;        \Maximum session duration (min)
+        SET E(0)  = -987.987;
+        SET F(0)  = -987.987 ---> S2
+S2,
+    #START: ---> S3
+S3,
+    0.01": SET T = T + 0.01;
+           IF T >= (A(1)*60) [@END, @CONTINUE]
+           @END: SET E(V) = 100, F(V) = T; ADD V; SET E(V) = -987.987, F(V) = -987.987 ---> STOPABORTFLUSH
+           @CONTINUE: ---> S3
+
+
+
+
+
+\*************************************
+\*********** LICK COUNTER ************
+\*************************************
+S.S.6,
+S1,
+    #START: SHOW 2, Right Licks: , C(10), 3, Left Licks: , C(13) ---> S2
+S2,
+    #R^RightLick: ADD C(10); SHOW 2, Right Licks: , C(10);
+                  SET E(V) = 23, F(V) = T; ADD V;
+                  SET E(V) = -987.987, F(V) = -987.987 ---> SX
+    #R^LeftLick: ADD C(13); SHOW 3, Left Licks: , C(13);
+                 SET E(V) = 26, F(V) = T; ADD V;
+                 SET E(V) = -987.987, F(V) = -987.987 ---> SX
+
+
+
+
+
+\*************************************
+\*** LIQUID RECEPTACLE HEAD ENTRY ****
+\*************************************
+S.S.7,
+S1,
+    #START: SHOW 4, HeadEntry: , C(2) ---> S2
+S2,
+    #R^HeadEntry: ADD C(2); SHOW 4, HeadEntry: , C(2);
+                  SET E(V) = 16, F(V) = T; ADD V; SET E(V) = -987.987, F(V) = -987.987 ---> SX
+
+
+
+
+
+\*************************************
+\*********** CUE LIGHTS *************
+\*************************************
+S.S.9,
+S1,
+    #START: ON ^LeftCueLt; ON ^RightCueLt;
+            SET E(V) = 3, F(V) = T; ADD V;
+            SET E(V) = 5, F(V) = T; ADD V;
+            SET E(V) = -987.987, F(V) = -987.987 ---> SX
+
+
+
+
+
+\*************************************
+\***** SESSION TIMER DISPLAY *********
+\*************************************
+S.S.10,
+S1,
+    #START: SHOW 1, Sess time(sec): , D(2) ---> S2
+S2,
+    1": ADD D(2); SHOW 1, Sess time(sec): , D(2) ---> S2
+
+

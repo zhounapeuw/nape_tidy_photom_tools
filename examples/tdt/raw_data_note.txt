@@ -1,0 +1,3 @@
+Find raw data zip here: https://zenodo.org/record/7718682#.ZAuwCHbMJjE
+
+zip and szve to ./raw/

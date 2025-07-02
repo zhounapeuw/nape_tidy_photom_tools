@@ -1,0 +1,77 @@
+---
+title: "headfixed_rotary_operant_ratio_extraction"
+author: "adam gordon-fennell"
+date: "04/16/2021"
+output:
+  html_document:
+    theme: flatly
+    toc: true
+    toc_float: true
+    toc_depth: 4
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = TRUE)
+```
+
+# libraries
+```{r, echo = TRUE}
+library(tidyverse)
+library(googlesheets4)
+library(arrow)
+library(lubridate)
+
+source('./functions/r_plots.R')
+source('./functions/r_general.R')
+source('./functions/r_fp.R')
+source('./functions/r_stats.R')
+```
+
+
+# Pre process data
+```{r, echo = TRUE}
+dir_extracted <- './examples/tdt/extracted'
+dir_processed <- './examples/tdt/processed'
+
+log_fp <- read.csv('./examples/tdt/log_data_fp_tdt.csv')
+
+fp_preprocess(dir_extracted, dir_processed, log_fp, manual_experiments = NA, manual_blocknames = NA, overwrite = 0)
+```
+
+
+# Read in data
+```{r}
+data_list <- combined_import(import_directory = dir_processed,
+                             filter_strings = c('abb'),
+                             prefixes = NA,
+                             suffixes = c('streams_session.feather', 'streams_peth.feather', 'events.feather'))
+
+streams <- data_list[[1]]
+streams_peth <- data_list[[2]] 
+events <- data_list[[3]] 
+```
+
+```{r, fig.height = 12, fig.width = 4}
+streams %>%
+  filter(time < 180) %>% # filter to first 3 min
+  gather('id', 'value', control:delta_control_poly_dff) %>% # gather all signal variables
+  ggplot(aes(time, value, color = fiber_id)) +
+  geom_line() +
+  facet_grid(id~blockname, scales = 'free') 
+```
+
+
+```{r, fig.height = 12, fig.width = 4}
+streams_peth %>%
+  filter(time_rel > -3, time_rel < 6) %>%
+  gather('id', 'value', control:delta_control_poly_dff) %>% # gather all signal variables
+  ggplot(aes(time_rel, value, color = fiber_id, fill = fiber_id)) +
+  stat_summary(fun = 'mean', geom = 'line', aes(group = fiber_id)) +
+  stat_summary(fun.data = 'mean_se', geom = 'ribbon', alpha = 1/4, aes(group = fiber_id), color = NA) +
+  facet_grid(id~blockname, scales = 'free') 
+  
+
+```
+
+

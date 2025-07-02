@@ -1,0 +1,43 @@
+---
+title: "headfixed_rotary_operant_ratio_extraction"
+author: "adam gordon-fennell"
+date: "04/16/2021"
+output:
+  html_document:
+    theme: flatly
+    toc: true
+    toc_float: true
+    toc_depth: 4
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = TRUE)
+```
+
+# libraries
+```{r, echo = TRUE}
+library(tidyverse)
+library(googlesheets4)
+library(arrow)
+library(lubridate)
+
+source('./functions/r_plots.R')
+source('./functions/r_general.R')
+source('./functions/r_fp.R')
+source('./functions/r_stats.R')
+```
+
+# import data
+```{r, echo = TRUE}
+dir_extracted <- './examples/tdt/extracted'
+dir_processed <- './examples/tdt/processed'
+
+log_fp <- read.csv('./examples/tdt/log_data_fp_tdt.csv')
+```
+
+# execute pre processing
+```{r}
+fp_preprocess(dir_extracted, dir_processed, log_fp, manual_experiments = NA, manual_blocknames = manual_blocknames, overwrite = 0)
+```
+
