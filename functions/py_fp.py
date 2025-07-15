@@ -374,5 +374,5 @@ def tidy_doric_extract_and_tidy(dir_raw, dir_extracted):
 if __name__ == "__main__":
     dir_raw = r'.\examples\tdt\raw'
     dir_extracted = r'.\examples\tdt\extracted'
-    channel_names = ['isoA', 'redB']
+    channel_names = ['405A', '465A']
     tidy_tdt_extract_and_tidy(dir_raw, dir_extracted, channel_names)

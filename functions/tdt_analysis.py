@@ -189,6 +189,13 @@ def fp_streams_fitted(streams_data: pd.DataFrame, streams_info: pd.DataFrame, si
             signal = loop_data.loc[loop_data['channel'].astype(str).str.contains(str(signal_id))][fp_value].reset_index(drop=True)
             control = loop_data.loc[loop_data['channel'].astype(str).str.contains(str(control_id))][fp_value].reset_index(drop=True)
 
+            # Add warning if signal_id or control_id is not present in channel column
+            channel_values = loop_data['channel'].astype(str).values
+            if not any(str(signal_id) in ch for ch in channel_values):
+                print(f"WARNING: signal_id {signal_id} not found in channel column for fiber {fiber_id_loop} in block {loop_data['blockname'].iloc[0]}")
+            if not any(str(control_id) in ch for ch in channel_values):
+                print(f"WARNING: control_id {control_id} not found in channel column for fiber {fiber_id_loop} in block {loop_data['blockname'].iloc[0]}")
+
             if fit_model.lower() == 'huber':
                 X_poly = PolynomialFeatures(degree=4, include_bias=True).fit_transform(control.values.reshape(-1, 1))
                 # Fit robust regression
@@ -1126,7 +1133,7 @@ if __name__ == "__main__":
     dir_extracted = r'.\examples\tdt\extracted'
     dir_processed = r'.\examples\tdt\processed'
     log_fp = r'examples\tdt\log_data_fp_tdt.csv'
-    log_fp = pd.read_csv(log_fp)
+    log_fp = pd.read_csv(log_fp).dropna(how='all')
     fp_preprocess(dir_extracted, dir_processed, log_fp, overwrite=1)
 
     # import pandas as pd

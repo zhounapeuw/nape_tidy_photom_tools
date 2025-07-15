@@ -53,15 +53,3 @@ df_data.columns = df_column_names
 df_data.to_feather(save_path + '.feather')
 df_data.to_csv(save_path + '.csv', header=True, index=False)
 
-
-########## streams_info file generation
-
-df_column_names = ['blockname', 'start_date', 'name', 'code', 'size', 'type', 'type_str', 'ucf', 'fs', 'dform', 'start_time', 'channel']
-df_info = pd.DataFrame(columns = df_column_names)
-
-for channel in channels:
-    [dataft['info']['blockname'], dataft['info']['start_date'], channel, 
-
-# Process each file and store the results
-# for file_path in file_paths:
-#     processed_channels = process_file(file_path)  # Change to 'linear' if needed
