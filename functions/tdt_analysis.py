@@ -192,9 +192,9 @@ def fp_streams_fitted(streams_data: pd.DataFrame, streams_info: pd.DataFrame, si
             # Add warning if signal_id or control_id is not present in channel column
             channel_values = loop_data['channel'].astype(str).values
             if not any(str(signal_id) in ch for ch in channel_values):
-                print(f"WARNING: signal_id {signal_id} not found in channel column for fiber {fiber_id_loop} in block {loop_data['blockname'].iloc[0]}")
+                print(f"WARNING: signal_id {signal_id} not found in channel column for fiber {fiber_id_loop} in block {loop_data['blockname'].iloc[0]}. Check the log_fp file or channels supplied for py_fp.")
             if not any(str(control_id) in ch for ch in channel_values):
-                print(f"WARNING: control_id {control_id} not found in channel column for fiber {fiber_id_loop} in block {loop_data['blockname'].iloc[0]}")
+                print(f"WARNING: control_id {control_id} not found in channel column for fiber {fiber_id_loop} in block {loop_data['blockname'].iloc[0]}. Check the log_fp file or channels supplied for py_fp.")
 
             if fit_model.lower() == 'huber':
                 X_poly = PolynomialFeatures(degree=4, include_bias=True).fit_transform(control.values.reshape(-1, 1))
@@ -804,11 +804,17 @@ def fp_preprocess(dir_extracted: str, dir_processed: str, log_fp: pd.DataFrame,
     key_files: pd.DataFrame = key_files.drop_duplicates()
 
     # Remove any files from key_files that aren't in log_fp
-    data_in_log_fp = log_fp['subject']
+    data_in_log_fp = log_fp['blockname']
     key_files = to_frame(key_files[key_files['blockname'].str.contains('|'.join(data_in_log_fp), case=False, regex=True)])
 
     # Join info from log_fp
     key_files = key_files.merge(log_fp, on='blockname', how='left')
+
+    # Check for blocknames that did not match any entry in log_fp (specifically, NaN in 'include' column)
+    nan_rows = key_files[key_files['include'].isna()]
+    if not nan_rows.empty:
+        missing_blocknames = nan_rows['blockname'].tolist()
+        print(f"ERROR: The following extracted files did not match any entry in log_fp (missing 'include' value) and will not be processed: {missing_blocknames}")
 
     # keep files that are flagged to be included
     key_files = key_files[key_files['include'] == 1]
@@ -1130,9 +1136,9 @@ def fp_preprocess(dir_extracted: str, dir_processed: str, log_fp: pd.DataFrame,
 
 if __name__ == "__main__":
 
-    dir_extracted = r'.\examples\tdt\extracted'
-    dir_processed = r'.\examples\tdt\processed'
-    log_fp = r'examples\tdt\log_data_fp_tdt.csv'
+    dir_extracted = r'D:\photom\extracted'
+    dir_processed = r'D:\photom\processed'
+    log_fp = r'D:\photom\log_data_fp_tdt.csv'
     log_fp = pd.read_csv(log_fp).dropna(how='all')
     fp_preprocess(dir_extracted, dir_processed, log_fp, overwrite=1)
 
