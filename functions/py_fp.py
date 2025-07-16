@@ -2,6 +2,8 @@ from re import search
 from tdt import read_block
 import pandas as pd
 import os
+import shutil
+import tempfile
 
 # info -----------------------------------------------------------------------------------------------------------------
 def tidy_tdt_info(data_tdt):
@@ -375,10 +377,7 @@ def tidy_doric_extract_and_tidy(dir_raw, dir_extracted):
 if __name__ == "__main__":
     dir_raw = r'D:\photom\raw'
     dir_extracted = r'D:\photom\extracted'
-    channel_names = ['405A', '465A']
-
-    import shutil
-    import tempfile
+    channel_names = ['405A', '465A'] # not needed for doric
 
     doric_files = []
     tdt_block_dirs = set()
