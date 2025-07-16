@@ -366,6 +366,7 @@ def tidy_doric_extract_and_tidy(dir_raw, dir_extracted):
             epocs_data["blockname"] = session_id
 
             streams_data.reset_index(drop = True).to_feather(os.path.join(dir_extracted, session_id + '_streams_data.feather'))
+            streams_data.reset_index(drop = True).to_csv(os.path.join(dir_extracted, session_id + '_streams_data.csv'))
             epocs_data.reset_index(drop = True).to_feather(os.path.join(dir_extracted, session_id + '_epocs_data.feather'))
     else:
         print('no files to extract... all fp in dir :'+ dir_raw + ' has already been extracted to dir: ' + dir_extracted)
@@ -375,4 +376,33 @@ if __name__ == "__main__":
     dir_raw = r'D:\photom\raw'
     dir_extracted = r'D:\photom\extracted'
     channel_names = ['405A', '465A']
-    tidy_tdt_extract_and_tidy(dir_raw, dir_extracted, channel_names)
+
+    import shutil
+    import tempfile
+
+    doric_files = []
+    tdt_block_dirs = set()
+
+    # Recursively walk through dir_raw to find .doric and .tev files
+    for root, dirs, files in os.walk(dir_raw):
+        for file in files:
+            if file.lower().endswith('.doric'):
+                doric_files.append(os.path.join(root, file))
+            elif file.lower().endswith('.tev'):
+                tdt_block_dirs.add(root)
+
+    # Process doric files if any
+    if doric_files:
+        with tempfile.TemporaryDirectory() as temp_doric_dir:
+            for f in doric_files:
+                shutil.copy(f, os.path.join(temp_doric_dir, os.path.basename(f)))
+            tidy_doric_extract_and_tidy(temp_doric_dir, dir_extracted)
+
+    # Process TDT block folders if any
+    if tdt_block_dirs:
+        with tempfile.TemporaryDirectory() as temp_tdt_dir:
+            for block_dir in tdt_block_dirs:
+                dst = os.path.join(temp_tdt_dir, os.path.basename(block_dir))
+                if os.path.isdir(block_dir):
+                    shutil.copytree(block_dir, dst)
+            tidy_tdt_extract_and_tidy(temp_tdt_dir, dir_extracted, channel_names)

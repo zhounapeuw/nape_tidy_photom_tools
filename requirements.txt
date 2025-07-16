@@ -5,3 +5,4 @@ pyarrow==19.0.1
 plotly==6.1.2
 scikit-learn==1.7.0
 tdt==0.6.8
+h5py==3.14.0
