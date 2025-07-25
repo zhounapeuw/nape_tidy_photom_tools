@@ -185,9 +185,10 @@ def tidy_tdt_extract_and_tidy(dir_raw, dir_extracted, channel_names):
             streams_info.reset_index(drop = True).to_feather(os.path.join(dir_extracted, session_id + '_streams_info.feather'))
             streams_data.reset_index(drop = True).to_feather(os.path.join(dir_extracted, session_id + '_streams_data.feather'))
 
-            if(flag_epoch):
-                epocs_info.reset_index(drop = True).to_feather(os.path.join(dir_extracted, session_id + '_epocs_info.feather'))
-                epocs_data.reset_index(drop = True).to_feather(os.path.join(dir_extracted, session_id + '_epocs_data.feather'))
+            # CZ suppressed - behav not developed yet
+            # if(flag_epoch):
+            #     epocs_info.reset_index(drop = True).to_feather(os.path.join(dir_extracted, session_id + '_epocs_info.feather'))
+            #     epocs_data.reset_index(drop = True).to_feather(os.path.join(dir_extracted, session_id + '_epocs_data.feather'))
                 
             print("Done with blockpath: " + block_path)
     else:
@@ -426,7 +427,7 @@ def tidy_doric_extract_and_tidy(dir_raw, dir_extracted):
             streams_info.reset_index(drop = True).to_csv(os.path.join(dir_extracted, session_id + '_streams_info.csv'))
             streams_data.reset_index(drop = True).to_feather(os.path.join(dir_extracted, session_id + '_streams_data.feather'))
             streams_data.reset_index(drop = True).to_csv(os.path.join(dir_extracted, session_id + '_streams_data.csv'))
-            epocs_data.reset_index(drop = True).to_feather(os.path.join(dir_extracted, session_id + '_epocs_data.feather'))
+            # epocs_data.reset_index(drop = True).to_feather(os.path.join(dir_extracted, session_id + '_epocs_data.feather')) # CZ suppressed - behav not developed yet
     else:
         print('no files to extract... all fp in dir :'+ dir_raw + ' has already been extracted to dir: ' + dir_extracted)
         
