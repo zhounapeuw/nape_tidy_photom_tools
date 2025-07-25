@@ -279,6 +279,58 @@ def doric_convert_channel_id(channel_id):
     return (channel_id)
 
 
+def doric_extract_stream_info(data):
+    # return info for an individual doric stream
+    import numpy as np
+    
+    streams_info_list = []
+    
+    for stream in data:
+        name = stream["Name"]
+        
+        # filter data to LockIn streams
+        if 'LockIn' in stream["Name"]:
+            channel_id = name.split('_')[-1]
+            channel_id = channel_id.replace('-LockIn', '')
+            channel_id = doric_convert_channel_id(channel_id)
+            
+            # Extract time data to calculate sampling rate
+            time_data = None
+            for io in stream["Data"]:
+                if 'Time' in io["Name"]:
+                    time_data = io["Data"]
+                    break
+            
+            # Calculate sampling rate if time data is available
+            fs = None
+            if time_data is not None and len(time_data) > 1:
+                # Calculate average sampling rate from time differences
+                time_diffs = np.diff(time_data)
+                fs = 1.0 / np.mean(time_diffs) if np.mean(time_diffs) > 0 else None
+            
+            # Get data size
+            data_size = len(time_data) if time_data is not None else 0
+            
+            # Create stream info DataFrame
+            stream_info = pd.DataFrame({
+                'name': [channel_id],
+                'channel': 1,
+                'fs': [fs],
+                'size': [data_size],
+                'type': ['LockIn'],
+                'type_str': ['LockIn Stream'],
+                'start_time': [time_data[0] if time_data is not None and len(time_data) > 0 else None],
+                'end_time': [time_data[-1] if time_data is not None and len(time_data) > 0 else None]
+            })
+            
+            streams_info_list.append(stream_info)
+    
+    if streams_info_list:
+        return pd.concat(streams_info_list, ignore_index=True)
+    else:
+        return pd.DataFrame()
+
+
 def doric_extract_stream_data(data):
     first_concat = 1
 
@@ -361,12 +413,17 @@ def tidy_doric_extract_and_tidy(dir_raw, dir_extracted):
 
             data = dr.ExtractDataAcquisition(block_path + '.doric') # read in data using doric function
 
+            streams_info = doric_extract_stream_info(data)
+            streams_info["blockname"] = session_id
+            
             streams_data = doric_extract_stream_data(data)
             streams_data["blockname"] = session_id
 
             epocs_data = doric_extract_epoch_data(data)
             epocs_data["blockname"] = session_id
 
+            streams_info.reset_index(drop = True).to_feather(os.path.join(dir_extracted, session_id + '_streams_info.feather'))
+            streams_info.reset_index(drop = True).to_csv(os.path.join(dir_extracted, session_id + '_streams_info.csv'))
             streams_data.reset_index(drop = True).to_feather(os.path.join(dir_extracted, session_id + '_streams_data.feather'))
             streams_data.reset_index(drop = True).to_csv(os.path.join(dir_extracted, session_id + '_streams_data.csv'))
             epocs_data.reset_index(drop = True).to_feather(os.path.join(dir_extracted, session_id + '_epocs_data.feather'))

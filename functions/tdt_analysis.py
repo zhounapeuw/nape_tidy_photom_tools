@@ -786,7 +786,7 @@ def fp_preprocess(dir_extracted: str, dir_processed: str, log_fp: pd.DataFrame,
 
     # File name suffixes in dir_processed and dir_extracted
     suffixes = ['_streams_peth.feather', '_streams_session.feather', '_events_peth.feather',
-                '_epocs_data.feather', '_epocs_info.feather', '_streams_data.feather',
+                '_epocs_data.feather', '_epocs_info.feather', '_streams_data.feather', '_streams_data.csv',
                 '_streams_info.feather', '_events.feather', '_streams.feather', '_info.feather',
                 '_streams_info.csv']
 
