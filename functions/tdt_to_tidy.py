@@ -1,3 +1,5 @@
+THIS IS OUTDATED; USE py_fp.py INSTEAD
+
 import matplotlib.pyplot as plt  # standard Python plotting library
 import numpy as np  # fundamental package for scientific computing, handles arrays and math
 import tdt # import the tdt library

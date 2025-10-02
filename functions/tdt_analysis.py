@@ -192,9 +192,9 @@ def fp_streams_fitted(streams_data: pd.DataFrame, streams_info: pd.DataFrame, si
             # Add warning if signal_id or control_id is not present in channel column
             channel_values = loop_data['channel'].astype(str).values
             if not any(str(signal_id) in ch for ch in channel_values):
-                print(f"WARNING: signal_id {signal_id} not found in channel column for fiber {fiber_id_loop} in block {loop_data['blockname'].iloc[0]}. Check the log_fp file or channels supplied for py_fp.")
+                print(f"WARNING: signal_id {signal_id} not found in channel column for fiber {fiber_id_loop} in block {loop_data['blockname'].iloc[0]}")
             if not any(str(control_id) in ch for ch in channel_values):
-                print(f"WARNING: control_id {control_id} not found in channel column for fiber {fiber_id_loop} in block {loop_data['blockname'].iloc[0]}. Check the log_fp file or channels supplied for py_fp.")
+                print(f"WARNING: control_id {control_id} not found in channel column for fiber {fiber_id_loop} in block {loop_data['blockname'].iloc[0]}")
 
             if fit_model.lower() == 'huber':
                 X_poly = PolynomialFeatures(degree=4, include_bias=True).fit_transform(control.values.reshape(-1, 1))
@@ -786,7 +786,7 @@ def fp_preprocess(dir_extracted: str, dir_processed: str, log_fp: pd.DataFrame,
 
     # File name suffixes in dir_processed and dir_extracted
     suffixes = ['_streams_peth.feather', '_streams_session.feather', '_events_peth.feather',
-                '_epocs_data.feather', '_epocs_info.feather', '_streams_data.feather', '_streams_data.csv',
+                '_epocs_data.feather', '_epocs_info.feather', '_streams_data.feather',
                 '_streams_info.feather', '_events.feather', '_streams.feather', '_info.feather',
                 '_streams_info.csv']
 
@@ -804,17 +804,11 @@ def fp_preprocess(dir_extracted: str, dir_processed: str, log_fp: pd.DataFrame,
     key_files: pd.DataFrame = key_files.drop_duplicates()
 
     # Remove any files from key_files that aren't in log_fp
-    data_in_log_fp = log_fp['blockname']
+    data_in_log_fp = log_fp['subject']
     key_files = to_frame(key_files[key_files['blockname'].str.contains('|'.join(data_in_log_fp), case=False, regex=True)])
 
     # Join info from log_fp
     key_files = key_files.merge(log_fp, on='blockname', how='left')
-
-    # Check for blocknames that did not match any entry in log_fp (specifically, NaN in 'include' column)
-    nan_rows = key_files[key_files['include'].isna()]
-    if not nan_rows.empty:
-        missing_blocknames = nan_rows['blockname'].tolist()
-        print(f"ERROR: The following extracted files did not match any entry in log_fp (missing 'include' value) and will not be processed: {missing_blocknames}")
 
     # keep files that are flagged to be included
     key_files = key_files[key_files['include'] == 1]
@@ -952,7 +946,7 @@ def fp_preprocess(dir_extracted: str, dir_processed: str, log_fp: pd.DataFrame,
                 (streams_data_smoothed['channel'].str.contains(str(loop_signal_id['channel_wavelength'])) |
                 streams_data_smoothed['channel'].str.contains(str(loop_signal_id['control_id'])))
             ]
-
+            # fp_streams_fitted does the main heavy lifting to do isosbestic correction and normalize    
             streams_data_smoothed_fitted_loop = fp_streams_fitted(streams_data_loop, streams_info,
                             loop_signal_id['channel_wavelength'],
                             key_file['control_id'], key_file['poly_degree_fitted_control'],
@@ -1100,7 +1094,8 @@ def fp_preprocess(dir_extracted: str, dir_processed: str, log_fp: pd.DataFrame,
                 streams_data_smoothed_fitted_peth_downsampled = streams_data_smoothed_fitted_peth_downsampled.assign(blockname_multi_subject=blockname_process)
 
             print(f"   ~ {blockname_process}_streams_session.feather")
-
+ 
+            # SAVE PROCESSED (ISOS-CORRECTED NORMALIZED, AND RAW) TRACE DATA
             streams_data_smoothed_fitted_downsampled.assign(blockname=blockname_process).to_feather(
                 os.path.join(dir_processed, f"{blockname_process}_streams_session.feather")
             )
@@ -1134,12 +1129,22 @@ def fp_preprocess(dir_extracted: str, dir_processed: str, log_fp: pd.DataFrame,
 
     return streams_data_smoothed_fitted_downsampled 
 
-if __name__ == "__main__":
 
+
+if __name__ == "__main__":
+    import chardet
+     
     dir_extracted = r'D:\photom\extracted'
     dir_processed = r'D:\photom\processed'
     log_fp = r'D:\photom\log_data_fp_tdt.csv'
-    log_fp = pd.read_csv(log_fp).dropna(how='all')
+    
+    with open(log_fp, 'rb') as f:
+        raw_data = f.read()
+        result = chardet.detect(raw_data)
+        encoding = result['encoding']
+
+    log_fp = pd.read_csv(log_fp, encoding=encoding)
+    #log_fp = pd.read_csv(log_fp).dropna(how='all')
     fp_preprocess(dir_extracted, dir_processed, log_fp, overwrite=1)
 
     # import pandas as pd

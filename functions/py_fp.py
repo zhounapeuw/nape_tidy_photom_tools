@@ -2,8 +2,6 @@ from re import search
 from tdt import read_block
 import pandas as pd
 import os
-import shutil
-import tempfile
 
 # info -----------------------------------------------------------------------------------------------------------------
 def tidy_tdt_info(data_tdt):
@@ -185,10 +183,9 @@ def tidy_tdt_extract_and_tidy(dir_raw, dir_extracted, channel_names):
             streams_info.reset_index(drop = True).to_feather(os.path.join(dir_extracted, session_id + '_streams_info.feather'))
             streams_data.reset_index(drop = True).to_feather(os.path.join(dir_extracted, session_id + '_streams_data.feather'))
 
-            # CZ suppressed - behav not developed yet
-            # if(flag_epoch):
-            #     epocs_info.reset_index(drop = True).to_feather(os.path.join(dir_extracted, session_id + '_epocs_info.feather'))
-            #     epocs_data.reset_index(drop = True).to_feather(os.path.join(dir_extracted, session_id + '_epocs_data.feather'))
+            if(flag_epoch):
+                epocs_info.reset_index(drop = True).to_feather(os.path.join(dir_extracted, session_id + '_epocs_info.feather'))
+                epocs_data.reset_index(drop = True).to_feather(os.path.join(dir_extracted, session_id + '_epocs_data.feather'))
                 
             print("Done with blockpath: " + block_path)
     else:
@@ -280,58 +277,6 @@ def doric_convert_channel_id(channel_id):
     return (channel_id)
 
 
-def doric_extract_stream_info(data):
-    # return info for an individual doric stream
-    import numpy as np
-    
-    streams_info_list = []
-    
-    for stream in data:
-        name = stream["Name"]
-        
-        # filter data to LockIn streams
-        if 'LockIn' in stream["Name"]:
-            channel_id = name.split('_')[-1]
-            channel_id = channel_id.replace('-LockIn', '')
-            channel_id = doric_convert_channel_id(channel_id)
-            
-            # Extract time data to calculate sampling rate
-            time_data = None
-            for io in stream["Data"]:
-                if 'Time' in io["Name"]:
-                    time_data = io["Data"]
-                    break
-            
-            # Calculate sampling rate if time data is available
-            fs = None
-            if time_data is not None and len(time_data) > 1:
-                # Calculate average sampling rate from time differences
-                time_diffs = np.diff(time_data)
-                fs = 1.0 / np.mean(time_diffs) if np.mean(time_diffs) > 0 else None
-            
-            # Get data size
-            data_size = len(time_data) if time_data is not None else 0
-            
-            # Create stream info DataFrame
-            stream_info = pd.DataFrame({
-                'name': [channel_id],
-                'channel': 1,
-                'fs': [fs],
-                'size': [data_size],
-                'type': ['LockIn'],
-                'type_str': ['LockIn Stream'],
-                'start_time': [time_data[0] if time_data is not None and len(time_data) > 0 else None],
-                'end_time': [time_data[-1] if time_data is not None and len(time_data) > 0 else None]
-            })
-            
-            streams_info_list.append(stream_info)
-    
-    if streams_info_list:
-        return pd.concat(streams_info_list, ignore_index=True)
-    else:
-        return pd.DataFrame()
-
-
 def doric_extract_stream_data(data):
     first_concat = 1
 
@@ -414,20 +359,14 @@ def tidy_doric_extract_and_tidy(dir_raw, dir_extracted):
 
             data = dr.ExtractDataAcquisition(block_path + '.doric') # read in data using doric function
 
-            streams_info = doric_extract_stream_info(data)
-            streams_info["blockname"] = session_id
-            
             streams_data = doric_extract_stream_data(data)
             streams_data["blockname"] = session_id
 
             epocs_data = doric_extract_epoch_data(data)
             epocs_data["blockname"] = session_id
 
-            streams_info.reset_index(drop = True).to_feather(os.path.join(dir_extracted, session_id + '_streams_info.feather'))
-            streams_info.reset_index(drop = True).to_csv(os.path.join(dir_extracted, session_id + '_streams_info.csv'))
             streams_data.reset_index(drop = True).to_feather(os.path.join(dir_extracted, session_id + '_streams_data.feather'))
-            streams_data.reset_index(drop = True).to_csv(os.path.join(dir_extracted, session_id + '_streams_data.csv'))
-            # epocs_data.reset_index(drop = True).to_feather(os.path.join(dir_extracted, session_id + '_epocs_data.feather')) # CZ suppressed - behav not developed yet
+            epocs_data.reset_index(drop = True).to_feather(os.path.join(dir_extracted, session_id + '_epocs_data.feather'))
     else:
         print('no files to extract... all fp in dir :'+ dir_raw + ' has already been extracted to dir: ' + dir_extracted)
         
@@ -435,31 +374,5 @@ def tidy_doric_extract_and_tidy(dir_raw, dir_extracted):
 if __name__ == "__main__":
     dir_raw = r'D:\photom\raw'
     dir_extracted = r'D:\photom\extracted'
-    channel_names = ['405A', '465A'] # not needed for doric
-
-    doric_files = []
-    tdt_block_dirs = set()
-
-    # Recursively walk through dir_raw to find .doric and .tev files
-    for root, dirs, files in os.walk(dir_raw):
-        for file in files:
-            if file.lower().endswith('.doric'):
-                doric_files.append(os.path.join(root, file))
-            elif file.lower().endswith('.tev'):
-                tdt_block_dirs.add(root)
-
-    # Process doric files if any
-    if doric_files:
-        with tempfile.TemporaryDirectory() as temp_doric_dir:
-            for f in doric_files:
-                shutil.copy(f, os.path.join(temp_doric_dir, os.path.basename(f)))
-            tidy_doric_extract_and_tidy(temp_doric_dir, dir_extracted)
-
-    # Process TDT block folders if any
-    if tdt_block_dirs:
-        with tempfile.TemporaryDirectory() as temp_tdt_dir:
-            for block_dir in tdt_block_dirs:
-                dst = os.path.join(temp_tdt_dir, os.path.basename(block_dir))
-                if os.path.isdir(block_dir):
-                    shutil.copytree(block_dir, dst)
-            tidy_tdt_extract_and_tidy(temp_tdt_dir, dir_extracted, channel_names)
+    channel_names = ['405A', '465A']
+    tidy_tdt_extract_and_tidy(dir_raw, dir_extracted, channel_names)
